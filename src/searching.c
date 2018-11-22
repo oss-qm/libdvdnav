@@ -106,7 +106,7 @@ dvdnav_status_t dvdnav_time_search(dvdnav_t *this,
   uint32_t first_cell_nr, last_cell_nr, cell_nr;
   int32_t found;
   cell_playback_t *cell;
-  dvd_state_t *state;
+  dvdnav_state_t *state;
 
   if(this->position_current.still != 0) {
     printerr("Cannot seek in a still frame.");
@@ -192,7 +192,7 @@ dvdnav_status_t dvdnav_sector_search(dvdnav_t *this,
   int32_t found;
   int forward = 0;
   cell_playback_t *cell;
-  dvd_state_t *state;
+  dvdnav_state_t *state;
   dvdnav_status_t result;
 
   if(this->position_current.still != 0) {
@@ -510,7 +510,7 @@ dvdnav_status_t dvdnav_get_position(dvdnav_t *this, uint32_t *pos,
   uint32_t cur_sector;
   int32_t cell_nr, first_cell_nr, last_cell_nr;
   cell_playback_t *cell;
-  dvd_state_t *state;
+  dvdnav_state_t *state;
 
   if(!this->started) {
     printerr("Virtual DVD machine not started.");
@@ -579,7 +579,7 @@ dvdnav_status_t dvdnav_get_position_in_title(dvdnav_t *this,
   uint32_t last_cell_nr;
   cell_playback_t *first_cell;
   cell_playback_t *last_cell;
-  dvd_state_t *state;
+  dvdnav_state_t *state;
 
   state = &(this->vm->state);
   if(!state->pgc) {
@@ -732,7 +732,7 @@ fail:
 }
 
 /* Get an admap and admap_len */
-static vobu_admap_t* dvdnav_admap_get(dvdnav_t *this, dvd_state_t *state,
+static vobu_admap_t* dvdnav_admap_get(dvdnav_t *this, dvdnav_state_t *state,
             int32_t *admap_len) {
   vobu_admap_t *admap = NULL;
   switch(state->domain) {
@@ -762,7 +762,7 @@ static vobu_admap_t* dvdnav_admap_get(dvdnav_t *this, dvd_state_t *state,
 }
 
 /* Get a tmap, tmap_len and tmap_interval */
-static vts_tmap_t* dvdnav_tmap_get(dvdnav_t *this, dvd_state_t *state,
+static vts_tmap_t* dvdnav_tmap_get(dvdnav_t *this, dvdnav_state_t *state,
             int32_t *tmap_len, int32_t *tmap_interval) {
   int32_t domain;
   ifo_handle_t *ifo = NULL;
@@ -955,7 +955,7 @@ static int32_t dvdnav_tmap_search(vts_tmap_t *tmap, uint32_t tmap_len,
 }
 
 /* Find the cell for a given time */
-static int32_t dvdnav_cell_find(dvdnav_t *this, dvd_state_t *state,
+static int32_t dvdnav_cell_find(dvdnav_t *this, dvdnav_state_t *state,
             uint64_t find_val, dvdnav_cell_data_t *cell_data) {
   uint32_t cells_len = 0;
   uint32_t cells_bgn = 0;
@@ -1152,7 +1152,7 @@ static int32_t dvdnav_tmap_get_entries_for_sector(
 }
 
 /* Find the nearest vobu by using the tmap */
-static int32_t dvdnav_find_vobu_by_tmap(dvdnav_t *this, dvd_state_t *state,
+static int32_t dvdnav_find_vobu_by_tmap(dvdnav_t *this, dvdnav_state_t *state,
             dvdnav_jump_args_t *args, dvdnav_cell_data_t *cell_data,
             dvdnav_pos_data_t *jump) {
   uint64_t seek_offset = 0;
@@ -1263,7 +1263,7 @@ dvdnav_status_t dvdnav_jump_to_sector_by_time(dvdnav_t *this,
             uint64_t time_in_pts_ticks, int32_t mode) {
   if (mode != JUMP_MODE_TIME_DEFAULT) return DVDNAV_STATUS_ERR;
   int32_t result = DVDNAV_STATUS_ERR;
-  dvd_state_t *state = NULL;
+  dvdnav_state_t *state = NULL;
   uint32_t sector_off = 0;
   dvdnav_pos_data_t *jump = NULL;
   dvdnav_cell_data_t *cell_data = NULL;

@@ -537,7 +537,7 @@ dvdnav_status_t dvdnav_get_next_block(dvdnav_t *this, uint8_t *buf,
 int64_t dvdnav_get_current_time(dvdnav_t *this) {
   int i;
   int64_t tm=0;
-  dvd_state_t *state = &this->vm->state;
+  dvdnav_state_t *state = &this->vm->state;
 
   if(! state->pgc)
     return 0;
@@ -556,7 +556,7 @@ int64_t dvdnav_get_current_time(dvdnav_t *this) {
 
 dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *this, uint8_t **buf,
                                             int32_t *event, int32_t *len) {
-  dvd_state_t *state;
+  dvdnav_state_t *state;
   int32_t result;
 
   if(!this)
@@ -753,7 +753,7 @@ dvdnav_status_t dvdnav_get_next_cache_block(dvdnav_t *this, uint8_t **buf,
       (this->position_current.cell_start != this->position_next.cell_start) ) {
     dvdnav_cell_change_event_t *cell_event = (dvdnav_cell_change_event_t *)*buf;
     int32_t first_cell_nr, last_cell_nr, i;
-    dvd_state_t *state = &this->vm->state;
+    dvdnav_state_t *state = &this->vm->state;
 
     this->cur_cell_time = 0;
     (*event) = DVDNAV_CELL_CHANGE;

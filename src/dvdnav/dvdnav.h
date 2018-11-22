@@ -52,6 +52,8 @@ extern "C" {
  */
 typedef struct dvdnav_s dvdnav_t;
 
+typedef struct dvdnav_state_s dvdnav_state_t;
+
 /* Status as reported by most of libdvdnav's functions */
 typedef int32_t dvdnav_status_t;
 
