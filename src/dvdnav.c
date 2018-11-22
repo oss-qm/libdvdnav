@@ -1229,6 +1229,23 @@ int8_t dvdnav_get_active_audio_stream(dvdnav_t *this) {
   return retval;
 }
 
+dvdnav_status_t dvdnav_set_active_audio_stream(dvdnav_t *self, int8_t streamid) {
+  if (!acquire_vm_pcg(self))
+    return DVDNAV_STATUS_ERR;
+
+  if (streamid < 0 || streamid >= 8)
+    return release_vm_err_msg(self, "invalid audio stream id");
+
+  if (!_dvdnav_valid_audio_stream(self, streamid))
+    return release_vm_err_msg(self, "invalid audio stream");
+
+  if (!_dvdnav_domain_is_vts(self) && (streamid != 0))
+    return release_vm_err_msg(self, "resetting streamid only allowed in vm state DVD_DOMAIN_VTS*");
+
+  self->vm->state.AST_REG = streamid;
+  return release_vm_ok(self);
+}
+
 int8_t dvdnav_get_active_spu_stream(dvdnav_t *this) {
   int8_t        retval;
 
