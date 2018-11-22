@@ -11,11 +11,14 @@
 /config.guess
 /config.h
 /config.h.in
+/config.h.in~
 /config.log
 /config.status
 /config.sub
 /configure
 /depcomp
+/doc/html
+/doc/latex
 /install-sh
 /libdvdnav*.tar.bz2
 /libtool
