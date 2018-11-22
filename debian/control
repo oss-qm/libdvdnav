@@ -1,0 +1,58 @@
+Source: libdvdnav
+Section: libs
+Priority: optional
+Maintainer: Debian Multimedia Maintainers <pkg-multimedia-maintainers@lists.alioth.debian.org>
+Uploaders: Reinhard Tartler <siretart@tauware.de>,
+           Benjamin Drung <bdrung@debian.org>,
+           Matteo F. Vescovi <mfv@debian.org>,
+           Balint Reczey <balint@balintreczey.hu>
+Build-Depends: debhelper (>= 10), doxygen, libdvdread-dev (>= 5.0.2)
+Standards-Version: 3.9.8
+Homepage: https://dvdnav.mplayerhq.hu/
+Vcs-Browser: https://anonscm.debian.org/git/pkg-multimedia/libdvdnav.git/
+Vcs-Git: https://anonscm.debian.org/git/pkg-multimedia/libdvdnav.git/
+
+Package: libdvdnav4
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Suggests: libdvdcss2
+Breaks: mencoder (<< 2:1.0),
+        mplayer (<< 2:1.0),
+        mplayer2 (<< 2.0-728-g2c378c7-4)
+Description: DVD navigation library
+ libdvdnav is a DVD navigation library, which provides an interface to the
+ advanced features of DVDs, like menus and navigation. It contains the VM and
+ other parts useful for writing DVD players. It's based on Ogle, but was
+ modified to be used by xine and mplayer.
+
+Package: libdvdnav-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libdvdnav4 (= ${binary:Version}),
+         libdvdread-dev (>= 5.0.2),
+         pkg-config,
+         ${misc:Depends}
+Suggests: libdvdcss-dev
+Description: DVD navigation library (development)
+ libdvdnav is a DVD navigation library, which provides an interface to the
+ advanced features of DVDs, like menus and navigation. It contains the VM and
+ other parts useful for writing DVD players. It's based on Ogle, but was
+ modified to be used by xine and mplayer.
+ .
+ This package contains the development files.
+
+Package: libdvdnav-doc
+Section: doc
+Architecture: all
+Multi-Arch: foreign
+Depends: libjs-jquery, ${misc:Depends}
+Description: DVD navigation library (documentation)
+ libdvdnav is a DVD navigation library, which provides an interface to the
+ advanced features of DVDs, like menus and navigation. It contains the VM and
+ other parts useful for writing DVD players. It's based on Ogle, but was
+ modified to be used by xine and mplayer.
+ .
+ This package contains the documentation.
