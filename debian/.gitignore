@@ -1,0 +1,5 @@
+.debhelper
+autoreconf.before
+autoreconf.after
+debhelper-build-stamp
+*.debhelper.log
