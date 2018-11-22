@@ -144,6 +144,11 @@ dvdnav_status_t dvdnav_set_region_mask(dvdnav_t *self, int32_t region_mask);
 dvdnav_status_t dvdnav_get_region_mask(dvdnav_t *self, int32_t *region_mask);
 
 /*
+ * Returns the region mask from DVD drive (vmg ifo structure)
+ */
+dvdnav_status_t dvdnav_read_region_mask(dvdnav_t *self, int32_t *region_mask);
+
+/*
  * Specify whether read-ahead caching should be used. You may not want this if your
  * decoding engine does its own buffering.
  *

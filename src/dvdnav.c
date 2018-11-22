@@ -1193,6 +1193,18 @@ int8_t dvdnav_get_spu_logical_stream(dvdnav_t *this, uint8_t subp_num) {
   return retval;
 }
 
+dvdnav_status_t dvdnav_read_region_mask(dvdnav_t *self, int32_t *region_mask) {
+  if (!acquire_vm_pcg(self))
+    return DVDNAV_STATUS_ERR;
+
+  if (self->vm && self->vm->vmgi && self->vm->vmgi->vmgi_mat) {
+    (*region_mask) = (((self->vm->vmgi->vmgi_mat->vmg_category >> 16) && 0xff)^0xff);
+    return release_vm_ok(self);
+  }
+
+  return release_vm_err(self);
+}
+
 dvdnav_status_t dvdnav_get_spu_attr(dvdnav_t *this, uint8_t audio_num, subp_attr_t *subp_attr) {
   if(!this->started) {
     printerr("Virtual DVD machine not started.");
