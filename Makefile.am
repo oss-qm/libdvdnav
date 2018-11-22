@@ -25,6 +25,7 @@ libdvdnav_la_SOURCES = \
 	src/vm/decoder.c \
 	src/vm/decoder.h \
 	src/vm/vm.c \
+	src/vm/vm.h \
 	src/vm/play.c \
 	src/vm/play.h \
 	src/vm/getset.c \
@@ -43,8 +44,7 @@ pkgincludedir = $(includedir)/dvdnav
 pkginclude_HEADERS = \
 	src/dvdnav/dvdnav.h \
 	src/dvdnav/dvdnav_events.h \
-	src/dvdnav/dvd_types.h \
-	src/dvdnav/vm.h
+	src/dvdnav/dvd_types.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = misc/dvdnav.pc

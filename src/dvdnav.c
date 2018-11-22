@@ -38,7 +38,7 @@
 #include <dvdread/nav_types.h>
 #include <dvdread/ifo_types.h> /* For vm_cmd_t */
 #include "vm/decoder.h"
-#include <dvdnav/vm.h>
+#include "vm/vm.h"
 #include "dvdnav_internal.h"
 #include "read_cache.h"
 #include <dvdread/nav_read.h>
