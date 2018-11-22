@@ -43,21 +43,21 @@
 #include "getset.h"
 /* Set functions */
 
-int set_TT(vm_t *vm, int tt) {
+int set_TT(dvdnav_vm_t *vm, int tt) {
   return set_PTT(vm, tt, 1);
 }
 
-int set_PTT(vm_t *vm, int tt, int ptt) {
+int set_PTT(dvdnav_vm_t *vm, int tt, int ptt) {
   assert(tt <= vm->vmgi->tt_srpt->nr_of_srpts);
   return set_VTS_PTT(vm, vm->vmgi->tt_srpt->title[tt - 1].title_set_nr,
                      vm->vmgi->tt_srpt->title[tt - 1].vts_ttn, ptt);
 }
 
-int set_VTS_TT(vm_t *vm, int vtsN, int vts_ttn) {
+int set_VTS_TT(dvdnav_vm_t *vm, int vtsN, int vts_ttn) {
   return set_VTS_PTT(vm, vtsN, vts_ttn, 1);
 }
 
-int set_VTS_PTT(vm_t *vm, int vtsN, int vts_ttn, int part) {
+int set_VTS_PTT(dvdnav_vm_t *vm, int vtsN, int vts_ttn, int part) {
   int pgcN, pgN, res;
 
   (vm->state).domain = DVD_DOMAIN_VTSTitle;
@@ -89,13 +89,13 @@ int set_VTS_PTT(vm_t *vm, int vtsN, int vts_ttn, int part) {
   return res;
 }
 
-int set_PROG(vm_t *vm, int tt, int pgcn, int pgn) {
+int set_PROG(dvdnav_vm_t *vm, int tt, int pgcn, int pgn) {
   assert(tt <= vm->vmgi->tt_srpt->nr_of_srpts);
   return set_VTS_PROG(vm, vm->vmgi->tt_srpt->title[tt - 1].title_set_nr,
                      vm->vmgi->tt_srpt->title[tt - 1].vts_ttn, pgcn, pgn);
 }
 
-int set_VTS_PROG(vm_t *vm, int vtsN, int vts_ttn, int pgcn, int pgn) {
+int set_VTS_PROG(dvdnav_vm_t *vm, int vtsN, int vts_ttn, int pgcn, int pgn) {
   int pgcN, pgN, res, title, part = 0;
 
   (vm->state).domain = DVD_DOMAIN_VTSTitle;
@@ -125,7 +125,7 @@ int set_VTS_PROG(vm_t *vm, int vtsN, int vts_ttn, int pgcn, int pgn) {
   return res;
 }
 
-int set_FP_PGC(vm_t *vm) {
+int set_FP_PGC(dvdnav_vm_t *vm) {
   if (!vm || !vm->vmgi)
       return 1;
   (vm->state).domain = DVD_DOMAIN_FirstPlay;
@@ -138,12 +138,12 @@ int set_FP_PGC(vm_t *vm) {
 }
 
 
-int set_MENU(vm_t *vm, int menu) {
+int set_MENU(dvdnav_vm_t *vm, int menu) {
   assert((vm->state).domain == DVD_DOMAIN_VMGM || (vm->state).domain == DVD_DOMAIN_VTSMenu);
   return set_PGCN(vm, get_ID(vm, menu));
 }
 
-int set_PGCN(vm_t *vm, int pgcN) {
+int set_PGCN(dvdnav_vm_t *vm, int pgcN) {
   pgcit_t *pgcit;
 
   pgcit = get_PGCIT(vm);
@@ -168,7 +168,7 @@ int set_PGCN(vm_t *vm, int pgcN) {
 }
 
 /* Figure out the correct pgN from the cell and update (vm->state). */
-int set_PGN(vm_t *vm) {
+int set_PGN(dvdnav_vm_t *vm) {
   int new_pgN = 0;
   int dummy, part = 0;
 
@@ -193,7 +193,7 @@ int set_PGN(vm_t *vm) {
 }
 
 /* Must be called before domain is changed (set_PGCN()) */
-void set_RSMinfo(vm_t *vm, int cellN, int blockN) {
+void set_RSMinfo(dvdnav_vm_t *vm, int cellN, int blockN) {
   int i;
 
   if(cellN) {
@@ -219,7 +219,7 @@ void set_RSMinfo(vm_t *vm, int cellN, int blockN) {
  * returns the current TT.
  * returns 0 if not found.
  */
-int get_TT(vm_t *vm, int vtsN, int vts_ttn) {
+int get_TT(dvdnav_vm_t *vm, int vtsN, int vts_ttn) {
   int i;
   int tt=0;
 
@@ -236,7 +236,7 @@ int get_TT(vm_t *vm, int vtsN, int vts_ttn) {
 /* Search for entry_id match of the PGC Category in the current VTS PGCIT table.
  * Return pgcN based on entry_id match.
  */
-int get_ID(vm_t *vm, int id) {
+int get_ID(dvdnav_vm_t *vm, int id) {
   int pgcN, i;
   pgcit_t *pgcit;
 
@@ -276,7 +276,7 @@ int get_ID(vm_t *vm, int id) {
 }
 
 /* FIXME: we have a pgcN member in the vm's state now, so this should be obsolete */
-int get_PGCN(vm_t *vm) {
+int get_PGCN(dvdnav_vm_t *vm) {
   pgcit_t *pgcit;
   int pgcN = 1;
 
@@ -296,7 +296,7 @@ int get_PGCN(vm_t *vm) {
   return 0; /*  error */
 }
 
-pgcit_t* get_MENU_PGCIT(vm_t *vm, ifo_handle_t *h, uint16_t lang) {
+pgcit_t* get_MENU_PGCIT(dvdnav_vm_t *vm, ifo_handle_t *h, uint16_t lang) {
   int i;
 
   if(h == NULL || h->pgci_ut == NULL) {
@@ -327,7 +327,7 @@ pgcit_t* get_MENU_PGCIT(vm_t *vm, ifo_handle_t *h, uint16_t lang) {
 }
 
 /* Uses state to decide what to return */
-pgcit_t* get_PGCIT(vm_t *vm) {
+pgcit_t* get_PGCIT(dvdnav_vm_t *vm) {
   pgcit_t *pgcit = NULL;
 
   switch ((vm->state).domain) {
