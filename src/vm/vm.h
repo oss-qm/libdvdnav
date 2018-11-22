@@ -26,7 +26,7 @@
 /**
  * State: SPRM, GPRM, Domain, pgc, pgN, cellN, ?
  */
-typedef struct {
+struct dvd_state_s {
   registers_t registers;
 
   DVDDomain_t  domain;
@@ -44,7 +44,7 @@ typedef struct {
   uint16_t rsm_regs[5];   /* system registers 4-8 */
   int      rsm_pgcN;
   int      rsm_cellN;
-} dvd_state_t;
+};
 
 typedef struct vm_position_s {
   int16_t  button;        /* Button highlighted */
