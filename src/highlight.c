@@ -30,9 +30,9 @@
 #include <string.h>
 #include <sys/time.h>
 #include <dvdread/nav_types.h>
-#include "dvdnav/dvdnav.h"
+#include <dvdnav/dvdnav.h>
+#include <dvdnav/vm.h>
 #include "vm/decoder.h"
-#include "vm/vm.h"
 #include "vm/vmcmd.h"
 #include "dvdnav_internal.h"
 
