@@ -66,7 +66,7 @@ typedef struct vm_position_s {
   int32_t  block;         /* block number within cell in use */
 } vm_position_t;
 
-typedef struct {
+struct dvdnav_vm_s {
   dvd_reader_t *dvd;
   ifo_handle_t *vmgi;
   ifo_handle_t *vtsi;
@@ -75,7 +75,7 @@ typedef struct {
   char          dvd_name[50];
   char          dvd_serial[15];
   int           stopped;
-} vm_t;
+};
 
 /* magic number for seeking hops */
 #define HOP_SEEK 0x1000
@@ -101,74 +101,74 @@ typedef struct {
 #define PTL_REG      registers.SPRM[13]
 
 /* Initialisation & destruction */
-vm_t *vm_new_vm(void);
-void  vm_free_vm(vm_t *vm);
+dvdnav_vm_t *vm_new_vm(void);
+void  vm_free_vm(dvdnav_vm_t *vm);
 
 /* IFO access */
-ifo_handle_t *vm_get_vmgi(vm_t *vm);
-ifo_handle_t *vm_get_vtsi(vm_t *vm);
+ifo_handle_t *vm_get_vmgi(dvdnav_vm_t *vm);
+ifo_handle_t *vm_get_vtsi(dvdnav_vm_t *vm);
 
 /* Reader Access */
-dvd_reader_t *vm_get_dvd_reader(vm_t *vm);
+dvd_reader_t *vm_get_dvd_reader(dvdnav_vm_t *vm);
 
 /* Basic Handling */
-int  vm_start(vm_t *vm);
-void vm_stop(vm_t *vm);
-int  vm_reset(vm_t *vm, const char *dvdroot, void *stream,
+int  vm_start(dvdnav_vm_t *vm);
+void vm_stop(dvdnav_vm_t *vm);
+int  vm_reset(dvdnav_vm_t *vm, const char *dvdroot, void *stream,
               dvdnav_stream_cb *stream_cb);
 
 /* copying and merging  - useful for try-running an operation */
-vm_t *vm_new_copy(vm_t *vm);
-void  vm_merge(vm_t *target, vm_t *source);
-void  vm_free_copy(vm_t *vm);
+dvdnav_vm_t *vm_new_copy(dvdnav_vm_t *vm);
+void  vm_merge(dvdnav_vm_t *target, dvdnav_vm_t *source);
+void  vm_free_copy(dvdnav_vm_t *vm);
 
 /* regular playback */
-void vm_position_get(vm_t *vm, vm_position_t *position);
-void vm_get_next_cell(vm_t *vm);
+void vm_position_get(dvdnav_vm_t *vm, vm_position_t *position);
+void vm_get_next_cell(dvdnav_vm_t *vm);
 
 /* Jumping - all these return 1, if a hop has been performed */
-int vm_jump_pg(vm_t *vm, int pg);
-int vm_jump_cell_block(vm_t *vm, int cell, int block);
-int vm_jump_title_part(vm_t *vm, int title, int part);
-int vm_jump_title_program(vm_t *vm, int title, int pgcn, int pgn);
-int vm_jump_top_pg(vm_t *vm);
-int vm_jump_next_pg(vm_t *vm);
-int vm_jump_prev_pg(vm_t *vm);
-int vm_jump_up(vm_t *vm);
-int vm_jump_menu(vm_t *vm, DVDMenuID_t menuid);
-int vm_jump_resume(vm_t *vm);
-int vm_exec_cmd(vm_t *vm, vm_cmd_t *cmd);
+int vm_jump_pg(dvdnav_vm_t *vm, int pg);
+int vm_jump_cell_block(dvdnav_vm_t *vm, int cell, int block);
+int vm_jump_title_part(dvdnav_vm_t *vm, int title, int part);
+int vm_jump_title_program(dvdnav_vm_t *vm, int title, int pgcn, int pgn);
+int vm_jump_top_pg(dvdnav_vm_t *vm);
+int vm_jump_next_pg(dvdnav_vm_t *vm);
+int vm_jump_prev_pg(dvdnav_vm_t *vm);
+int vm_jump_up(dvdnav_vm_t *vm);
+int vm_jump_menu(dvdnav_vm_t *vm, DVDMenuID_t menuid);
+int vm_jump_resume(dvdnav_vm_t *vm);
+int vm_exec_cmd(dvdnav_vm_t *vm, vm_cmd_t *cmd);
 
 /* getting information */
-int vm_get_current_menu(vm_t *vm, int *menuid);
-int vm_get_current_title_part(vm_t *vm, int *title_result, int *part_result);
-int vm_get_audio_stream(vm_t *vm, int audioN);
-int vm_get_subp_stream(vm_t *vm, int subpN, int mode);
-int vm_get_audio_active_stream(vm_t *vm);
-int vm_get_subp_active_stream(vm_t *vm, int mode);
-void vm_get_angle_info(vm_t *vm, int *current, int *num_avail);
+int vm_get_current_menu(dvdnav_vm_t *vm, int *menuid);
+int vm_get_current_title_part(dvdnav_vm_t *vm, int *title_result, int *part_result);
+int vm_get_audio_stream(dvdnav_vm_t *vm, int audioN);
+int vm_get_subp_stream(dvdnav_vm_t *vm, int subpN, int mode);
+int vm_get_audio_active_stream(dvdnav_vm_t *vm);
+int vm_get_subp_active_stream(dvdnav_vm_t *vm, int mode);
+void vm_get_angle_info(dvdnav_vm_t *vm, int *current, int *num_avail);
 #if 0
 /* currently unused */
-void vm_get_audio_info(vm_t *vm, int *current, int *num_avail);
-void vm_get_subp_info(vm_t *vm, int *current, int *num_avail);
+void vm_get_audio_info(dvdnav_vm_t *vm, int *current, int *num_avail);
+void vm_get_subp_info(dvdnav_vm_t *vm, int *current, int *num_avail);
 #endif
-void vm_get_video_res(vm_t *vm, int *width, int *height);
-int  vm_get_video_aspect(vm_t *vm);
-int  vm_get_video_scale_permission(vm_t *vm);
-video_attr_t vm_get_video_attr(vm_t *vm);
-audio_attr_t vm_get_audio_attr(vm_t *vm, int streamN);
-subp_attr_t  vm_get_subp_attr(vm_t *vm, int streamN);
-ifo_handle_t *vm_get_title_ifo(vm_t *vm, uint32_t title);
+void vm_get_video_res(dvdnav_vm_t *vm, int *width, int *height);
+int  vm_get_video_aspect(dvdnav_vm_t *vm);
+int  vm_get_video_scale_permission(dvdnav_vm_t *vm);
+video_attr_t vm_get_video_attr(dvdnav_vm_t *vm);
+audio_attr_t vm_get_audio_attr(dvdnav_vm_t *vm, int streamN);
+subp_attr_t  vm_get_subp_attr(dvdnav_vm_t *vm, int streamN);
+ifo_handle_t *vm_get_title_ifo(dvdnav_vm_t *vm, uint32_t title);
 void vm_ifo_close(ifo_handle_t *ifo);
 
 /* Uncomment for VM command tracing */
 /* #define TRACE */
 #ifdef TRACE
 /* Debug */
-void vm_position_print(vm_t *vm, vm_position_t *position);
+void vm_position_print(dvdnav_vm_t *vm, vm_position_t *position);
 #endif
 
-int ifoOpenNewVTSI(vm_t *vm, dvd_reader_t *dvd, int vtsN);
+int ifoOpenNewVTSI(dvdnav_vm_t *vm, dvd_reader_t *dvd, int vtsN);
 
 
 #endif /* LIBDVDNAV_VM_H */

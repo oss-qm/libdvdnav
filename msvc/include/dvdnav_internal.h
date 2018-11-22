@@ -149,7 +149,7 @@ struct dvdnav_s {
   int pgc_based;                  /* positioning works PGC based instead of PG based */
 
   /* VM */
-  vm_t *vm;
+  dvdnav_vm_t *vm;
   pthread_mutex_t vm_lock;
 
   /* Read-ahead cache */

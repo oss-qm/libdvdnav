@@ -403,7 +403,7 @@ dvdnav_status_t dvdnav_top_pg_search(dvdnav_t *this) {
 }
 
 dvdnav_status_t dvdnav_next_pg_search(dvdnav_t *this) {
-  vm_t *try_vm;
+  dvdnav_vm_t *try_vm;
 
   pthread_mutex_lock(&this->vm_lock);
   if(!this->vm->state.pgc) {
@@ -456,7 +456,7 @@ fail:
 }
 
 dvdnav_status_t dvdnav_menu_call(dvdnav_t *this, DVDMenuID_t menu) {
-  vm_t *try_vm;
+  dvdnav_vm_t *try_vm;
 
   pthread_mutex_lock(&this->vm_lock);
   if(!this->vm->state.pgc) {
