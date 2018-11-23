@@ -1317,6 +1317,18 @@ int8_t dvdnav_get_active_spu_stream(dvdnav_t *this) {
   return retval;
 }
 
+dvdnav_status_t dvdnav_enable_spu_stream(dvdnav_t *self, int enable) {
+  if (!acquire_vm_pcg(self))
+    return DVDNAV_STATUS_ERR;
+
+  if (enable)
+    self->vm->state.SPST_REG |= 0x40;
+  else
+    self->vm->state.SPST_REG &= ~0x40;
+
+  return release_vm_ok(self);
+}
+
 int8_t dvdnav_get_spu_stream_count(dvdnav_t *self) {
   int8_t ret = 0;
 

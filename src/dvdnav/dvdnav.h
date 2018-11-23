@@ -664,6 +664,11 @@ int8_t dvdnav_get_active_subtitle_stream(dvdnav_t *self);
 dvdnav_status_t dvdnav_set_active_spu_stream(dvdnav_t *self, int8_t streamid);
 
 /*
+ * Enable/Disable spu stream.
+ */
+dvdnav_status_t dvdnav_enable_spu_stream(dvdnav_t *self, int enable);
+
+/*
  * Get spu stream count.
 */
 int8_t dvdnav_get_spu_stream_count(dvdnav_t *self);
