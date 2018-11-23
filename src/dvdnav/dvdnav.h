@@ -659,6 +659,11 @@ int8_t dvdnav_get_active_subtitle_stream(dvdnav_t *self);
 dvdnav_status_t dvdnav_set_active_spu_stream(dvdnav_t *self, int8_t streamid);
 
 /*
+ * Get spu stream count.
+*/
+int8_t dvdnav_get_spu_stream_count(dvdnav_t *self);
+
+/*
  * Get the set of user operations that are currently prohibited.
  * There are potentially new restrictions right after
  * DVDNAV_CHANNEL_HOP and DVDNAV_NAV_PACKET.

@@ -1317,6 +1317,29 @@ int8_t dvdnav_get_active_spu_stream(dvdnav_t *this) {
   return retval;
 }
 
+int8_t dvdnav_get_spu_stream_count(dvdnav_t *self) {
+  int8_t ret = 0;
+
+  if (!acquire_vm_pcg(self))
+    return 0;
+
+  if (_dvdnav_domain_is_vts(self))
+  {
+    for (int i = 0; i < 32; i++)
+    {
+      if (_dvdnav_valid_subp_stream(self, i))
+        ret++;
+    }
+  }
+  else
+  {
+    /* just for good measure say that non vts domain always has one */
+    ret = 1;
+  }
+
+  return release_vm_ret_int8(self, ret);
+}
+
 static int8_t dvdnav_is_domain(dvdnav_t *this, DVDDomain_t domain) {
   int8_t        retval;
 
