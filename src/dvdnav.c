@@ -1276,6 +1276,27 @@ dvdnav_status_t dvdnav_set_active_spu_stream(dvdnav_t *self, int8_t streamid) {
   return release_vm_ok(self);
 }
 
+/* slightly different from dvdnav_get_active_spu_stream() */
+int8_t dvdnav_get_active_subtitle_stream(dvdnav_t *this) {
+  int8_t id = 0;
+
+  if (!acquire_vm_pcg(this))
+    return -1;
+
+  if (!_dvdnav_domain_is_vts(this))
+    return release_vm_erri_msg(this, "Virtual DVD machine not in state DVD_DOMAIN_VTS*");
+
+  id = this->vm->state.SPST_REG & ~0x40;
+
+  if (id < 0 || id >= 32)
+    return release_vm_erri_msg(this, "Invalid subtitle id");
+
+  if (!_dvdnav_valid_subp_stream(this, id))
+    return release_vm_erri_msg(this, "Invalid subtitle stream");
+
+  return release_vm_ret_int8(this, id);
+}
+
 int8_t dvdnav_get_active_spu_stream(dvdnav_t *this) {
   int8_t        retval;
 
