@@ -1258,6 +1258,24 @@ dvdnav_status_t dvdnav_set_active_audio_stream(dvdnav_t *self, int8_t streamid) 
   return release_vm_ok(self);
 }
 
+dvdnav_status_t dvdnav_set_active_spu_stream(dvdnav_t *self, int8_t streamid) {
+  if (!acquire_vm_pcg(self))
+    return DVDNAV_STATUS_ERR;
+
+  if (streamid < 0 || streamid >= 32)
+    return release_vm_err_msg(self, "invalid audio stream id");
+
+  if ( !(self->vm->state.pgc->subp_control[streamid] & (1<<31)) )
+    return release_vm_err_msg(self, "invalid subtitle stream");
+
+  if (!_dvdnav_domain_is_vts(self) && streamid != 0)
+    return release_vm_err_msg(self, "resetting streamid only allowed in vm state DVD_DOMAIN_VTS*");
+
+  /* set subtitle stream w/o modifying visibility */
+  self->vm->state.SPST_REG = streamid | (self->vm->state.SPST_REG & 0x40);
+  return release_vm_ok(self);
+}
+
 int8_t dvdnav_get_active_spu_stream(dvdnav_t *this) {
   int8_t        retval;
 

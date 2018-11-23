@@ -649,6 +649,11 @@ dvdnav_status_t dvdnav_set_active_audio_stream(dvdnav_t *self, int8_t streamid);
 int8_t dvdnav_get_active_spu_stream(dvdnav_t *self);
 
 /*
+ * Set active spu stream.
+ */
+dvdnav_status_t dvdnav_set_active_spu_stream(dvdnav_t *self, int8_t streamid);
+
+/*
  * Get the set of user operations that are currently prohibited.
  * There are potentially new restrictions right after
  * DVDNAV_CHANNEL_HOP and DVDNAV_NAV_PACKET.
