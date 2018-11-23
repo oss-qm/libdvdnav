@@ -644,6 +644,11 @@ int8_t dvdnav_get_active_audio_stream(dvdnav_t *self);
 dvdnav_status_t dvdnav_set_active_audio_stream(dvdnav_t *self, int8_t streamid);
 
 /*
+ * Get audio stream count
+ */
+int8_t dvdnav_get_audio_stream_count(dvdnav_t *self);
+
+/*
  * Get active spu stream.
  */
 int8_t dvdnav_get_active_spu_stream(dvdnav_t *self);
