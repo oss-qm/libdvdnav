@@ -70,6 +70,59 @@ static dvdnav_status_t dvdnav_clear(dvdnav_t * this) {
   return DVDNAV_STATUS_OK;
 }
 
+static int _dvdnav_domain_is_vts(dvdnav_t *self) {
+    return ((self->vm->state.domain == DVD_DOMAIN_VTSTitle) ||
+            (self->vm->state.domain == DVD_DOMAIN_VTSMenu));
+}
+
+static int acquire_vm_pcg(dvdnav_t *this) {
+  if (!this->started) {
+    printerr("Virtual DVD machine not started.");
+    return 0;
+  }
+
+  pthread_mutex_lock(&this->vm_lock);
+
+  if (!this->vm->state.pgc) {
+    printerr("No current PGC.");
+    return 0;
+  }
+
+  return 1;
+}
+
+static inline dvdnav_status_t release_vm_err(dvdnav_t *self) {
+  pthread_mutex_unlock(&self->vm_lock);
+  return DVDNAV_STATUS_ERR;
+}
+
+static inline int release_vm_erri(dvdnav_t *self) {
+  pthread_mutex_unlock(&self->vm_lock);
+  return -1;
+}
+
+static inline int release_vm_erri_msg(dvdnav_t *this, const char* msg) {
+  pthread_mutex_unlock(&this->vm_lock);
+  printerr(msg);
+  return -1;
+}
+
+static inline dvdnav_status_t release_vm_err_msg(dvdnav_t *this, const char* msg) {
+  pthread_mutex_unlock(&this->vm_lock);
+  printerr(msg);
+  return DVDNAV_STATUS_ERR;
+}
+
+static inline dvdnav_status_t release_vm_ok(dvdnav_t *self) {
+  pthread_mutex_unlock(&self->vm_lock);
+  return DVDNAV_STATUS_OK;
+}
+
+static inline int8_t release_vm_ret_int8(dvdnav_t *self, int8_t ret) {
+  pthread_mutex_unlock(&self->vm_lock);
+  return ret;
+}
+
 dvdnav_status_t dvdnav_dup(dvdnav_t **dest, dvdnav_t *src) {
   dvdnav_t *this;
 
@@ -1092,6 +1145,15 @@ int8_t dvdnav_get_audio_logical_stream(dvdnav_t *this, uint8_t audio_num) {
   pthread_mutex_unlock(&this->vm_lock);
 
   return retval;
+}
+
+/** helpers for checking for valid stream index */
+static inline int _dvdnav_valid_audio_stream(dvdnav_t *self, int8_t idx) {
+  return (self->vm->state.pgc->audio_control[idx] & (1<<15));
+}
+
+static inline int _dvdnav_valid_subp_stream(dvdnav_t *self, int8_t idx) {
+  return (self->vm->state.pgc->subp_control[idx] & (1<<31));
 }
 
 dvdnav_status_t dvdnav_get_audio_attr(dvdnav_t *this, uint8_t audio_num, audio_attr_t *audio_attr) {
