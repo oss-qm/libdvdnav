@@ -1156,6 +1156,103 @@ static inline int _dvdnav_valid_subp_stream(dvdnav_t *self, int8_t idx) {
   return (self->vm->state.pgc->subp_control[idx] & (1<<31));
 }
 
+int8_t dvdnav_spu_stream_seq_to_idx(dvdnav_t *self, int8_t seq) {
+  if (!acquire_vm_pcg(self))
+    return -1;
+
+  if (_dvdnav_domain_is_vts(self)) {
+    int8_t seq_walk = -1;
+    for (int idx_walk=0; idx_walk<8; idx_walk++) {
+      if (_dvdnav_valid_subp_stream(self, idx_walk)) seq_walk++;
+      if (seq_walk == seq) return release_vm_ret_int8(self, idx_walk);
+    }
+  }
+  else if (seq == 0)
+    return release_vm_ret_int8(self, 0);
+
+  return release_vm_ret_int8(self, -1);
+}
+
+int8_t dvdnav_spu_stream_idx_to_seq(dvdnav_t *this, int8_t idx) {
+  if (!acquire_vm_pcg(this))
+    return -1;
+
+  if (idx < 0)
+    return release_vm_ret_int8(this, -1);
+
+  if (_dvdnav_domain_is_vts(this)) {
+    if (idx >= 32) {
+      printerrf("%s: seq too large: %d", __FUNCTION__, idx);
+      return release_vm_ret_int8(this, -1);
+    }
+
+    if (_dvdnav_valid_subp_stream(this, idx)) {
+      int8_t seq = -1;
+      for (int x = 0; x <= idx; x++)
+        if (_dvdnav_valid_subp_stream(this, x)) seq++;
+
+      return release_vm_ret_int8(this, seq);
+    }
+
+    printerrf("%s: ID not found: %d", __FUNCTION__, idx);
+    return release_vm_ret_int8(this, -1);
+  }
+
+  if( idx != 0 )
+    printerrf("%s: non-vts domain cant have ID != 0", __FUNCTION__);
+
+  return release_vm_ret_int8(this, 0);
+}
+
+int8_t dvdnav_audio_stream_idx_to_seq(dvdnav_t *this, int8_t idx) {
+  if (idx < 0)
+    return -1;
+
+  if (!acquire_vm_pcg(this))
+    return -1;
+
+  if (_dvdnav_domain_is_vts(this)) {
+    if (idx >= 8) {
+      printerrf("%s: incorrect index: %d", __FUNCTION__, idx);
+      return release_vm_ret_int8(this, -1);
+    }
+
+    if (_dvdnav_valid_audio_stream(this, idx)) {
+      int8_t seq_walk = -1;
+      for (int idx_walk=0; idx_walk <= idx; idx_walk++)
+        if (_dvdnav_valid_subp_stream(this, idx_walk)) seq_walk++;
+      return release_vm_ret_int8(this, seq_walk);
+    }
+
+    printerrf("%s: non existing index %d", __FUNCTION__, idx);
+    return release_vm_ret_int8(this, -1);
+  }
+
+  if( idx != 0 )
+    printerrf("%s - non vts domain can't have idx %d", __FUNCTION__, idx);
+
+  // non-VTS, only one stream is available
+  return release_vm_ret_int8(this, 0);
+}
+
+int8_t dvdnav_audio_stream_seq_to_idx(dvdnav_t *self, int8_t seq) {
+  if (!acquire_vm_pcg(self))
+    return -1;
+
+  if (_dvdnav_domain_is_vts(self)) {
+    int8_t seq_walk = -1;
+    for (int idx_walk=0; idx_walk<8; idx_walk++) {
+      if (_dvdnav_valid_subp_stream(self, idx_walk)) seq_walk++;
+      if (seq_walk == seq) return release_vm_ret_int8(self, idx_walk);
+    }
+  }
+
+  if (seq == 0)
+    return release_vm_ret_int8(self, 0);
+
+  return release_vm_ret_int8(self, -1);
+}
+
 dvdnav_status_t dvdnav_get_audio_attr(dvdnav_t *this, uint8_t audio_num, audio_attr_t *audio_attr) {
   if(!this->started) {
     printerr("Virtual DVD machine not started.");

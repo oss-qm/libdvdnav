@@ -594,6 +594,26 @@ uint8_t dvdnav_get_video_scale_permission(dvdnav_t *self);
 uint16_t dvdnav_audio_stream_to_lang(dvdnav_t *self, uint8_t stream);
 
 /*
+ * Convert audio stream index to sequential number
+ */
+int8_t dvdnav_audio_stream_idx_to_seq(dvdnav_t *self, int8_t idx);
+
+/*
+ * Convert audio stream sequential number to index
+ */
+int8_t dvdnav_audio_stream_seq_to_idx(dvdnav_t *self, int8_t seq);
+
+/*
+ * Convert spu stream index to squential number
+ */
+int8_t dvdnav_spu_stream_idx_to_seq(dvdnav_t *self, int8_t idx);
+
+/*
+ * Convert spu stream sequential number to index
+ */
+int8_t dvdnav_spu_stream_seq_to_idx(dvdnav_t *self, int8_t seq);
+
+/*
  * Returns the format of *logical* audio stream 'stream'
  * (returns 0xffff if no such stream).
  */
