@@ -43,7 +43,7 @@
 
 /* Playback control */
 
-link_t play_PGC(dvdnav_vm_t *vm) {
+link_t play_PGC(vm_t *vm) {
   link_t link_values;
 
 #ifdef TRACE
@@ -83,7 +83,7 @@ link_t play_PGC(dvdnav_vm_t *vm) {
   return play_PG(vm);
 }
 
-link_t play_PGC_PG(dvdnav_vm_t *vm, int pgN) {
+link_t play_PGC_PG(vm_t *vm, int pgN) {
   link_t link_values;
 
 #ifdef TRACE
@@ -123,7 +123,7 @@ link_t play_PGC_PG(dvdnav_vm_t *vm, int pgN) {
   return play_PG(vm);
 }
 
-link_t play_PGC_post(dvdnav_vm_t *vm) {
+link_t play_PGC_post(vm_t *vm) {
   link_t link_values = { LinkNoLink, 0, 0, 0 };
 
 #ifdef TRACE
@@ -153,7 +153,7 @@ link_t play_PGC_post(dvdnav_vm_t *vm) {
   return play_PGC(vm);
 }
 
-link_t play_PG(dvdnav_vm_t *vm) {
+link_t play_PG(vm_t *vm) {
 #ifdef TRACE
   fprintf(MSG_OUT, "libdvdnav: play_PG: (vm->state).pgN (%i)\n", (vm->state).pgN);
 #endif
@@ -173,7 +173,7 @@ link_t play_PG(dvdnav_vm_t *vm) {
   return play_Cell(vm);
 }
 
-link_t play_Cell(dvdnav_vm_t *vm) {
+link_t play_Cell(vm_t *vm) {
   static const link_t play_this = {PlayThis, /* Block in Cell */ 0, 0, 0};
 
 #ifdef TRACE
@@ -246,7 +246,7 @@ link_t play_Cell(dvdnav_vm_t *vm) {
   return play_this;
 }
 
-link_t play_Cell_post(dvdnav_vm_t *vm) {
+link_t play_Cell_post(vm_t *vm) {
   cell_playback_t *cell;
 
 #ifdef TRACE

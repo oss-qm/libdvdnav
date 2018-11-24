@@ -67,15 +67,15 @@
 /* Local prototypes */
 
 /* Process link - returns 1 if a hop has been performed */
-static int process_command(dvdnav_vm_t *vm,link_t link_values);
+static int process_command(vm_t *vm,link_t link_values);
 
 /* Helper functions */
-static void vm_close(dvdnav_vm_t *vm);
+static void vm_close(vm_t *vm);
 
 /* Debug functions */
 
 #ifdef TRACE
-void vm_position_print(dvdnav_vm_t *vm, vm_position_t *position) {
+void vm_position_print(vm_t *vm, vm_position_t *position) {
   fprintf(MSG_OUT, "libdvdnav: But=%x Spu=%x Aud=%x Ang=%x Hop=%x vts=%x dom=%x cell=%x cell_restart=%x cell_start=%x still=%x block=%x\n",
   position->button,
   position->spu_channel,
@@ -91,7 +91,7 @@ void vm_position_print(dvdnav_vm_t *vm, vm_position_t *position) {
   position->block);
 }
 
-static void vm_print_current_domain_state(dvdnav_vm_t *vm) {
+static void vm_print_current_domain_state(vm_t *vm) {
   const char *domain;
 
   switch(vm->state.domain) {
@@ -219,7 +219,7 @@ fail:
   return 0;
 }
 
-int ifoOpenNewVTSI(dvdnav_vm_t *vm, dvd_reader_t *dvd, int vtsN) {
+int ifoOpenNewVTSI(vm_t *vm, dvd_reader_t *dvd, int vtsN) {
   if(vm->state.vtsN == vtsN) {
     return 1; /*  We alread have it */
   }
@@ -260,11 +260,11 @@ int ifoOpenNewVTSI(dvdnav_vm_t *vm, dvd_reader_t *dvd, int vtsN) {
 
 /* Initialisation & Destruction */
 
-dvdnav_vm_t* vm_new_vm() {
-  return (dvdnav_vm_t*)calloc(1, sizeof(dvdnav_vm_t));
+vm_t* vm_new_vm() {
+  return (vm_t*)calloc(1, sizeof(vm_t));
 }
 
-void vm_free_vm(dvdnav_vm_t *vm) {
+void vm_free_vm(vm_t *vm) {
   vm_close(vm);
   free(vm);
 }
@@ -272,25 +272,25 @@ void vm_free_vm(dvdnav_vm_t *vm) {
 
 /* IFO Access */
 
-ifo_handle_t *vm_get_vmgi(dvdnav_vm_t *vm) {
+ifo_handle_t *vm_get_vmgi(vm_t *vm) {
   return vm->vmgi;
 }
 
-ifo_handle_t *vm_get_vtsi(dvdnav_vm_t *vm) {
+ifo_handle_t *vm_get_vtsi(vm_t *vm) {
   return vm->vtsi;
 }
 
 
 /* Reader Access */
 
-dvd_reader_t *vm_get_dvd_reader(dvdnav_vm_t *vm) {
+dvd_reader_t *vm_get_dvd_reader(vm_t *vm) {
   return vm->dvd;
 }
 
 
 /* Basic Handling */
 
-int vm_start(dvdnav_vm_t *vm) {
+int vm_start(vm_t *vm) {
   if (vm->stopped) {
     if (!vm_reset(vm, NULL, NULL, NULL))
       return 0;
@@ -303,11 +303,11 @@ int vm_start(dvdnav_vm_t *vm) {
   return !vm->stopped;
 }
 
-void vm_stop(dvdnav_vm_t *vm) {
+void vm_stop(vm_t *vm) {
   vm->stopped = 1;
 }
 
-static void vm_close(dvdnav_vm_t *vm) {
+static void vm_close(vm_t *vm) {
   if(!vm)
     return;
   if(vm->vmgi) {
@@ -325,7 +325,7 @@ static void vm_close(dvdnav_vm_t *vm) {
   vm->stopped = 1;
 }
 
-int vm_reset(dvdnav_vm_t *vm, const char *dvdroot,
+int vm_reset(vm_t *vm, const char *dvdroot,
              void *stream, dvdnav_stream_cb *stream_cb) {
   /*  Setup State */
   memset(vm->state.registers.SPRM, 0, sizeof(vm->state.registers.SPRM));
@@ -425,8 +425,8 @@ int vm_reset(dvdnav_vm_t *vm, const char *dvdroot,
 
 /* copying and merging */
 
-dvdnav_vm_t *vm_new_copy(dvdnav_vm_t *source) {
-  dvdnav_vm_t *target = vm_new_vm();
+vm_t *vm_new_copy(vm_t *source) {
+  vm_t *target = vm_new_vm();
   int vtsN;
   int pgcN = get_PGCN(source);
   int pgN  = (source->state).pgN;
@@ -434,7 +434,7 @@ dvdnav_vm_t *vm_new_copy(dvdnav_vm_t *source) {
   if (target == NULL || pgcN == 0)
     goto fail;
 
-  memcpy(target, source, sizeof(dvdnav_vm_t));
+  memcpy(target, source, sizeof(vm_t));
 
   /* open a new vtsi handle, because the copy might switch to another VTS */
   target->vtsi = NULL;
@@ -460,14 +460,14 @@ fail:
   return NULL;
 }
 
-void vm_merge(dvdnav_vm_t *target, dvdnav_vm_t *source) {
+void vm_merge(vm_t *target, vm_t *source) {
   if(target->vtsi)
     ifoClose(target->vtsi);
-  memcpy(target, source, sizeof(dvdnav_vm_t));
-  memset(source, 0, sizeof(dvdnav_vm_t));
+  memcpy(target, source, sizeof(vm_t));
+  memset(source, 0, sizeof(vm_t));
 }
 
-void vm_free_copy(dvdnav_vm_t *vm) {
+void vm_free_copy(vm_t *vm) {
   if(vm->vtsi)
     ifoClose(vm->vtsi);
   free(vm);
@@ -476,7 +476,7 @@ void vm_free_copy(dvdnav_vm_t *vm) {
 
 /* regular playback */
 
-void vm_position_get(dvdnav_vm_t *vm, vm_position_t *position) {
+void vm_position_get(vm_t *vm, vm_position_t *position) {
   position->button = vm->state.HL_BTNN_REG >> 10;
   position->vts = vm->state.vtsN;
   position->domain = vm->state.domain;
@@ -525,20 +525,20 @@ void vm_position_get(dvdnav_vm_t *vm, vm_position_t *position) {
   }
 }
 
-void vm_get_next_cell(dvdnav_vm_t *vm) {
+void vm_get_next_cell(vm_t *vm) {
   process_command(vm, play_Cell_post(vm));
 }
 
 
 /* Jumping */
 
-int vm_jump_pg(dvdnav_vm_t *vm, int pg) {
+int vm_jump_pg(vm_t *vm, int pg) {
   vm->state.pgN = pg;
   process_command(vm, play_PG(vm));
   return 1;
 }
 
-int vm_jump_cell_block(dvdnav_vm_t *vm, int cell, int block) {
+int vm_jump_cell_block(vm_t *vm, int cell, int block) {
   vm->state.cellN = cell;
   process_command(vm, play_Cell(vm));
   /* play_Cell can jump to a different cell in case of angles */
@@ -547,7 +547,7 @@ int vm_jump_cell_block(dvdnav_vm_t *vm, int cell, int block) {
   return 1;
 }
 
-int vm_jump_title_program(dvdnav_vm_t *vm, int title, int pgcn, int pgn) {
+int vm_jump_title_program(vm_t *vm, int title, int pgcn, int pgn) {
   link_t link;
 
   if(!set_PROG(vm, title, pgcn, pgn))
@@ -565,7 +565,7 @@ int vm_jump_title_program(dvdnav_vm_t *vm, int title, int pgcn, int pgn) {
   return 1;
 }
 
-int vm_jump_title_part(dvdnav_vm_t *vm, int title, int part) {
+int vm_jump_title_part(vm_t *vm, int title, int part) {
   link_t link;
 
   if(!set_PTT(vm, title, part))
@@ -583,12 +583,12 @@ int vm_jump_title_part(dvdnav_vm_t *vm, int title, int part) {
   return 1;
 }
 
-int vm_jump_top_pg(dvdnav_vm_t *vm) {
+int vm_jump_top_pg(vm_t *vm) {
   process_command(vm, play_PG(vm));
   return 1;
 }
 
-int vm_jump_next_pg(dvdnav_vm_t *vm) {
+int vm_jump_next_pg(vm_t *vm) {
   if(vm->state.pgN >= vm->state.pgc->nr_of_programs) {
     /* last program -> move to TailPGC */
     process_command(vm, play_PGC_post(vm));
@@ -599,7 +599,7 @@ int vm_jump_next_pg(dvdnav_vm_t *vm) {
   }
 }
 
-int vm_jump_prev_pg(dvdnav_vm_t *vm) {
+int vm_jump_prev_pg(vm_t *vm) {
   if (vm->state.pgN <= 1) {
     /* first program -> move to last program of previous PGC */
     if (vm->state.pgc->prev_pgc_nr && set_PGCN(vm, vm->state.pgc->prev_pgc_nr)) {
@@ -614,7 +614,7 @@ int vm_jump_prev_pg(dvdnav_vm_t *vm) {
   }
 }
 
-int vm_jump_up(dvdnav_vm_t *vm) {
+int vm_jump_up(vm_t *vm) {
   if(vm->state.pgc->goup_pgc_nr && set_PGCN(vm, vm->state.pgc->goup_pgc_nr)) {
     process_command(vm, play_PGC(vm));
     return 1;
@@ -622,7 +622,7 @@ int vm_jump_up(dvdnav_vm_t *vm) {
   return 0;
 }
 
-int vm_jump_menu(dvdnav_vm_t *vm, DVDMenuID_t menuid) {
+int vm_jump_menu(vm_t *vm, DVDMenuID_t menuid) {
   DVDDomain_t old_domain = vm->state.domain;
 
   switch (vm->state.domain) {
@@ -661,7 +661,7 @@ int vm_jump_menu(dvdnav_vm_t *vm, DVDMenuID_t menuid) {
   return 0;
 }
 
-int vm_jump_resume(dvdnav_vm_t *vm) {
+int vm_jump_resume(vm_t *vm) {
   link_t link_values = { LinkRSM, 0, 0, 0 };
 
   if (!vm->state.rsm_vtsN) /* Do we have resume info? */
@@ -669,7 +669,7 @@ int vm_jump_resume(dvdnav_vm_t *vm) {
   return !!process_command(vm, link_values);
 }
 
-int vm_exec_cmd(dvdnav_vm_t *vm, vm_cmd_t *cmd) {
+int vm_exec_cmd(vm_t *vm, vm_cmd_t *cmd) {
   link_t link_values;
 
   if(vmEval_CMD(cmd, 1, &vm->state.registers, &link_values))
@@ -680,7 +680,7 @@ int vm_exec_cmd(dvdnav_vm_t *vm, vm_cmd_t *cmd) {
 
 /* link processing */
 
-static int process_command(dvdnav_vm_t *vm, link_t link_values) {
+static int process_command(vm_t *vm, link_t link_values) {
 
   while(link_values.command != PlayThis) {
 
@@ -1091,7 +1091,7 @@ static int process_command(dvdnav_vm_t *vm, link_t link_values) {
 
 //return the ifo_handle_t describing required title, used to
 //identify chapters
-ifo_handle_t *vm_get_title_ifo(dvdnav_vm_t *vm, uint32_t title)
+ifo_handle_t *vm_get_title_ifo(vm_t *vm, uint32_t title)
 {
   uint8_t titleset_nr;
   if((title < 1) || (title > vm->vmgi->tt_srpt->nr_of_srpts))

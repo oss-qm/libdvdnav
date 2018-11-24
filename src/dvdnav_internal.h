@@ -207,7 +207,7 @@ struct dvdnav_s {
   int cur_cell_time;              /* time expired since the beginning of the current cell, read from the dsi */
 
   /* VM */
-  dvdnav_vm_t *vm;
+  vm_t *vm;
   pthread_mutex_t vm_lock;
 
   /* Read-ahead cache */

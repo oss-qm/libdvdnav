@@ -43,7 +43,7 @@
 
 /* getting information */
 
-int vm_get_current_menu(dvdnav_vm_t *vm, int *menuid) {
+int vm_get_current_menu(vm_t *vm, int *menuid) {
   pgcit_t* pgcit;
   int pgcn;
   pgcn = (vm->state).pgcN;
@@ -53,7 +53,7 @@ int vm_get_current_menu(dvdnav_vm_t *vm, int *menuid) {
   return 1;
 }
 
-int vm_get_current_title_part(dvdnav_vm_t *vm, int *title_result, int *part_result) {
+int vm_get_current_title_part(vm_t *vm, int *title_result, int *part_result) {
   vts_ptt_srpt_t *vts_ptt_srpt;
   int title, part = 0, vts_ttn;
   int found;
@@ -108,7 +108,7 @@ int vm_get_current_title_part(dvdnav_vm_t *vm, int *title_result, int *part_resu
 /* Return the substream id for 'logical' audio stream audioN.
  * 0 <= audioN < 8
  */
-int vm_get_audio_stream(dvdnav_vm_t *vm, int audioN) {
+int vm_get_audio_stream(vm_t *vm, int audioN) {
   int streamN = -1;
 
   if((vm->state).domain != DVD_DOMAIN_VTSTitle)
@@ -135,7 +135,7 @@ int vm_get_audio_stream(dvdnav_vm_t *vm, int audioN) {
  * mode == 1 - letterbox
  * mode == 2 - pan&scan
  */
-int vm_get_subp_stream(dvdnav_vm_t *vm, int subpN, int mode) {
+int vm_get_subp_stream(vm_t *vm, int subpN, int mode) {
   int streamN = -1;
   int source_aspect = vm_get_video_aspect(vm);
 
@@ -168,7 +168,7 @@ int vm_get_subp_stream(dvdnav_vm_t *vm, int subpN, int mode) {
   return streamN;
 }
 
-int vm_get_audio_active_stream(dvdnav_vm_t *vm) {
+int vm_get_audio_active_stream(vm_t *vm) {
   int audioN;
   int streamN;
   audioN = (vm->state).AST_REG ;
@@ -187,7 +187,7 @@ int vm_get_audio_active_stream(dvdnav_vm_t *vm) {
   return streamN;
 }
 
-int vm_get_subp_active_stream(dvdnav_vm_t *vm, int mode) {
+int vm_get_subp_active_stream(vm_t *vm, int mode) {
   int subpN;
   int streamN;
   subpN = (vm->state).SPST_REG & ~0x40;
@@ -210,7 +210,7 @@ int vm_get_subp_active_stream(dvdnav_vm_t *vm, int mode) {
     return streamN;
 }
 
-void vm_get_angle_info(dvdnav_vm_t *vm, int *current, int *num_avail) {
+void vm_get_angle_info(vm_t *vm, int *current, int *num_avail) {
   *num_avail = 1;
   *current = 1;
 
@@ -230,7 +230,7 @@ void vm_get_angle_info(dvdnav_vm_t *vm, int *current, int *num_avail) {
 
 #if 0
 /* currently unused */
-void vm_get_audio_info(dvdnav_vm_t *vm, int *current, int *num_avail) {
+void vm_get_audio_info(vm_t *vm, int *current, int *num_avail) {
   switch ((vm->state).domain) {
   case DVD_DOMAIN_VTSTitle:
     *num_avail = vm->vtsi->vtsi_mat->nr_of_vts_audio_streams;
@@ -249,7 +249,7 @@ void vm_get_audio_info(dvdnav_vm_t *vm, int *current, int *num_avail) {
 }
 
 /* currently unused */
-void vm_get_subp_info(dvdnav_vm_t *vm, int *current, int *num_avail) {
+void vm_get_subp_info(vm_t *vm, int *current, int *num_avail) {
   switch ((vm->state).domain) {
   case DVD_DOMAIN_VTSTitle:
     *num_avail = vm->vtsi->vtsi_mat->nr_of_vts_subp_streams;
@@ -268,7 +268,7 @@ void vm_get_subp_info(dvdnav_vm_t *vm, int *current, int *num_avail) {
 }
 #endif
 
-void vm_get_video_res(dvdnav_vm_t *vm, int *width, int *height) {
+void vm_get_video_res(vm_t *vm, int *width, int *height) {
   video_attr_t attr = vm_get_video_attr(vm);
 
   if(attr.video_format != 0)
@@ -292,7 +292,7 @@ void vm_get_video_res(dvdnav_vm_t *vm, int *width, int *height) {
   }
 }
 
-int vm_get_video_aspect(dvdnav_vm_t *vm) {
+int vm_get_video_aspect(vm_t *vm) {
   int aspect = vm_get_video_attr(vm).display_aspect_ratio;
 
   if(aspect != 0 && aspect != 3) {
@@ -306,11 +306,11 @@ int vm_get_video_aspect(dvdnav_vm_t *vm) {
   return aspect;
 }
 
-int vm_get_video_scale_permission(dvdnav_vm_t *vm) {
+int vm_get_video_scale_permission(vm_t *vm) {
   return vm_get_video_attr(vm).permitted_df;
 }
 
-video_attr_t vm_get_video_attr(dvdnav_vm_t *vm) {
+video_attr_t vm_get_video_attr(vm_t *vm) {
   switch ((vm->state).domain) {
   case DVD_DOMAIN_VTSTitle:
     return vm->vtsi->vtsi_mat->vts_video_attr;
@@ -324,7 +324,7 @@ video_attr_t vm_get_video_attr(dvdnav_vm_t *vm) {
   }
 }
 
-audio_attr_t vm_get_audio_attr(dvdnav_vm_t *vm, int streamN) {
+audio_attr_t vm_get_audio_attr(vm_t *vm, int streamN) {
   switch ((vm->state).domain) {
   case DVD_DOMAIN_VTSTitle:
     return vm->vtsi->vtsi_mat->vts_audio_attr[streamN];
@@ -338,7 +338,7 @@ audio_attr_t vm_get_audio_attr(dvdnav_vm_t *vm, int streamN) {
   }
 }
 
-subp_attr_t vm_get_subp_attr(dvdnav_vm_t *vm, int streamN) {
+subp_attr_t vm_get_subp_attr(vm_t *vm, int streamN) {
   switch ((vm->state).domain) {
   case DVD_DOMAIN_VTSTitle:
     return vm->vtsi->vtsi_mat->vts_subp_attr[streamN];

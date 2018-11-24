@@ -22,10 +22,10 @@
  */
 
 /* Play */
-link_t play_PGC(dvdnav_vm_t *vm);
-link_t play_PGC_PG(dvdnav_vm_t *vm, int pgN);
-link_t play_PGC_post(dvdnav_vm_t *vm);
-link_t play_PG(dvdnav_vm_t *vm);
-link_t play_Cell(dvdnav_vm_t *vm);
-link_t play_Cell_post(dvdnav_vm_t *vm);
+link_t play_PGC(vm_t *vm);
+link_t play_PGC_PG(vm_t *vm, int pgN);
+link_t play_PGC_post(vm_t *vm);
+link_t play_PG(vm_t *vm);
+link_t play_Cell(vm_t *vm);
+link_t play_Cell_post(vm_t *vm);
 
